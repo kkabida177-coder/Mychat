@@ -1,0 +1,368 @@
+{
+  "entities": {
+    "UserPrivate": {
+      "title": "UserPrivate",
+      "description": "Private authenticated user account record containing PII such as email.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Firebase Auth UID of the user."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 254,
+          "description": "User email address."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Account creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Account last update timestamp."
+        }
+      },
+      "required": ["uid", "email", "createdAt", "updatedAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Public friend-facing user profile without PII, storing display name, username, avatar, bio, and online presence.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Firebase Auth UID of the user."
+        },
+        "username": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]{3,24}$",
+          "minLength": 3,
+          "maxLength": 24,
+          "description": "Unique lowercase handle for friend discovery."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "User display name."
+        },
+        "photoURL": {
+          "type": "string",
+          "maxLength": 65536,
+          "description": "Profile picture URL or compressed avatar data URI."
+        },
+        "bio": {
+          "type": "string",
+          "maxLength": 160,
+          "description": "Short status bio."
+        },
+        "isOnline": {
+          "type": "boolean",
+          "description": "Whether the user is currently active."
+        },
+        "lastSeen": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last active heartbeat timestamp."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Profile creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Profile update timestamp."
+        }
+      },
+      "required": [
+        "uid",
+        "username",
+        "displayName",
+        "photoURL",
+        "bio",
+        "isOnline",
+        "lastSeen",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UsernameLookup": {
+      "title": "UsernameLookup",
+      "description": "Exact-match handle reservation mapping a lowercase username to a user UID and display summary.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Owner Firebase Auth UID."
+        },
+        "username": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]{3,24}$",
+          "minLength": 3,
+          "maxLength": 24,
+          "description": "Reserved username matching document ID."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Owner display name."
+        },
+        "photoURL": {
+          "type": "string",
+          "maxLength": 65536,
+          "description": "Owner avatar URL."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "username", "displayName", "photoURL", "createdAt", "updatedAt"]
+    },
+    "FriendEntry": {
+      "title": "FriendEntry",
+      "description": "Confirmed friend relationship entry under a user's friends subcollection.",
+      "type": "object",
+      "properties": {
+        "friendUid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "UID of the confirmed friend."
+        },
+        "nickname": {
+          "type": "string",
+          "maxLength": 60,
+          "description": "Optional custom display nickname."
+        },
+        "addedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Friendship confirmation timestamp."
+        }
+      },
+      "required": ["friendUid", "nickname", "addedAt"]
+    },
+    "FriendRequest": {
+      "title": "FriendRequest",
+      "description": "One-to-one friend request between two authenticated users.",
+      "type": "object",
+      "properties": {
+        "fromUid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Sender UID."
+        },
+        "toUid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Recipient UID."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "accepted", "declined"],
+          "description": "Request state."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["fromUid", "toUid", "status", "createdAt", "updatedAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "One-to-one conversation metadata between two participants.",
+      "type": "object",
+      "properties": {
+        "participantA": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "participantB": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "participantIds": {
+          "type": "array",
+          "description": "Bounded two-element array of participant UIDs."
+        },
+        "lastMessageText": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "lastMessageSenderId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "lastMessageAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "unreadA": {
+          "type": "integer"
+        },
+        "unreadB": {
+          "type": "integer"
+        },
+        "lastReadAtA": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastReadAtB": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "typingAtA": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "typingAtB": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "participantA",
+        "participantB",
+        "participantIds",
+        "lastMessageText",
+        "lastMessageSenderId",
+        "lastMessageAt",
+        "unreadA",
+        "unreadB",
+        "lastReadAtA",
+        "lastReadAtB",
+        "typingAtA",
+        "typingAtB",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Individual real-time message inside a one-to-one conversation.",
+      "type": "object",
+      "properties": {
+        "senderId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "receiverId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "participantIds": {
+          "type": "array",
+          "description": "Bounded two-element array of participant UIDs matching parent conversation."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "replyToText": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "replyToSenderName": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "reaction": {
+          "type": "string",
+          "maxLength": 16
+        },
+        "deleted": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "senderId",
+        "receiverId",
+        "participantIds",
+        "text",
+        "replyToText",
+        "replyToSenderName",
+        "reaction",
+        "deleted",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserPrivate" },
+      "description": "Private user PII document readable and writable strictly by the owning user."
+    },
+    "/profiles/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Friend-facing profile without PII, storing name, handle, avatar, bio, and online status."
+    },
+    "/usernames/{username}": {
+      "schema": { "$ref": "#/entities/UsernameLookup" },
+      "description": "Exact-match handle registry mapping username to UID."
+    },
+    "/users/{userId}/friends/{friendId}": {
+      "schema": { "$ref": "#/entities/FriendEntry" },
+      "description": "Subcollection of confirmed friends for a user."
+    },
+    "/friendRequests/{requestId}": {
+      "schema": { "$ref": "#/entities/FriendRequest" },
+      "description": "Pending, accepted, or declined friend requests."
+    },
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/Conversation" },
+      "description": "One-to-one conversation threads keyed by sorted participant UIDs."
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Messages belonging to a one-to-one conversation."
+    }
+  }
+}
